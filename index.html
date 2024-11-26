@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Cardápio Ideal</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    const { useState } = React;
+
+    function App() {
+      const [page, setPage] = useState('home');
+      const [mealPlan, setMealPlan] = useState([]);
+
+      React.useEffect(() => {
+        if (page === 'dashboard') {
+          fetch('https://meu-cardapio-ideal-backend.onrender.com')
+            .then((response) => response.json())
+            .then((data) => setMealPlan(data));
+        }
+      }, [page]);
+
+      const renderPage = () => {
+        if (page === 'home') {
+          return <div><h1>Welcome to Meu Cardápio Ideal</h1><p>Your Personalized Meal Plan, Made Simple</p></div>;
+        } else if (page === 'features') {
+          return (
+            <div>
+              <h1>Features</h1>
+              <ul>
+                <li>Personalized Meal Plans</li>
+                <li>Automated Shopping Lists</li>
+                <li>Community Forum</li>
+                <li>Progress Tracking</li>
+              </ul>
+            </div>
+          );
+        } else if (page === 'dashboard') {
+          return (
+            <div>
+              <h1>Dashboard</h1>
+              <ul>
+                {mealPlan.map((meal, index) => (
+                  <li key={index}>{meal.name} - {meal.calories} kcal</li>
+                ))}
+              </ul>
+            </div>
+          );
+        } else {
+          return <div><h1>Page Not Found</h1></div>;
+        }
+      };
+
+      return (
+        <div>
+          <nav>
+            <button onClick={() => setPage('home')}>Home</button>
+            <button onClick={() => setPage('features')}>Features</button>
+            <button onClick={() => setPage('dashboard')}>Dashboard</button>
+          </nav>
+          {renderPage()}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
